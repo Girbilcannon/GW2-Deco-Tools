@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GW2 Deco Tools v7.3 (External JS)</title>
+
+  <!-- Strict CSP: no inline scripts/styles, only same-origin resources -->
+  <meta http-equiv="Content-Security-Policy"
+        content="
+          default-src 'self';
+          script-src 'self';
+          style-src 'self';
+          img-src 'self' data:;
+          object-src 'none';
+          base-uri 'self';
+          form-action 'self';
+          frame-ancestors 'none';
+        ">
+
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div id="themeToggle">🌙 Inquest Mode</div>
+
+<div class="wrapper">
+
+  <h1>GW2 Deco Tools</h1>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-target="tool-mover">Deco Mover</button>
+    <button class="tab" data-target="tool-counter">Deco Counter</button>
+    <button class="tab" data-target="tool-swap">Map Swap</button>
+    <button class="tab" data-target="tool-merger">Deco Merger</button>
+    <button class="tab" data-target="tool-extract">Deco Extraction</button>
+    <button class="tab" data-target="tool-about">About / Credits</button>
+  </div>
+
+  <!-- =========================
+       TAB: DECO MOVER
+       ========================= -->
+  <div id="tool-mover" class="tool-pane active">
+
+    <div class="section-title">Deco Mover Tool</div>
+
+    <div class="note-box">
+      Moves all decorations in the main XML by shifting them from a source location to a destination location. 
+      To get a Start and End location, simply clear your decorations, place a box or any object in its rough location, 
+      save it as a new file, move the box to a new spot, and then save a new file for end location.
+    </div>
+
+    <div class="grid3">
+      <div>
+        <label>Main Decorations XML</label>
+        <div class="drop-zone">
+          <div class="drop-zone-icon">📄</div>
+          <div class="drop-zone-text">Drop XML here or click to browse</div>
+          <input type="file" id="mover-main" accept=".xml">
+        </div>
+      </div>
+      <div>
+        <label>Start Location XML</label>
+        <div class="drop-zone">
+          <div class="drop-zone-icon">📄</div>
+          <div class="drop-zone-text">Drop XML here or click to browse</div>
+          <input type="file" id="mover-start" accept=".xml">
+        </div>
+      </div>
+      <div>
+        <label>End Location XML</label>
+        <div class="drop-zone">
+          <div class="drop-zone-icon">📄</div>
+          <div class="drop-zone-text">Drop XML here or click to browse</div>
+          <input type="file" id="mover-end" accept=".xml">
+        </div>
+      </div>
+    </div>
+
+    <button id="runMoverBtn">Move Decorations</button>
+
+    <!-- VIDEO LINK -->
+    <div class="video-section">
+      <div class="video-caption">
+        Instructional Video for the Deco Mover Tool:
+      </div>
+
+      <a class="video-link" href="https://youtu.be/OkFAmKErguY" target="_blank">
+        ▶ Watch on YouTube
+      </a>
+    </div>
+
+  </div>
+
+  <!-- =========================
+       TAB: COUNTER
+       ========================= -->
+  <div id="tool-counter" class="tool-pane">
+
+    <div class="section-title">Deco Counter Tool</div>
+
+    <div class="note-box">
+      Upload a saved homestead layout and this tool will show you exactly how many of each decoration is required for the build.
+    </div>
+
+    <div>
+      <label>Decorations XML</label>
+      <div class="drop-zone">
+        <div class="drop-zone-icon">📄</div>
+        <div class="drop-zone-text">Drop XML here or click to browse</div>
+        <input type="file" id="counter-xml" accept=".xml">
+      </div>
+    </div>
+
+    <button id="runCounterBtn">Count Decorations</button>
+
+    <pre id="counter-output"></pre>
+    <button id="downloadCounter" style="display:none;">Download List</button>
+
+  </div>
+
+  <!-- =========================
+       TAB: MAP SWAP
+       ========================= -->
+  <div id="tool-swap" class="tool-pane">
+
+    <div class="section-title">Map Swap Tool</div>
+
+    <div class="note-box">
+      Change the Homestead map associated with your decoration XML.<br><br>
+      After swapping maps, you may need to use the 
+      <span class="link-like" data-switch-tab="tool-mover">
+        Deco Mover Tool
+      </span> afterwards to correct placement.
+    </div>
+
+    <div>
+      <label>Homestead Decorations XML</label>
+      <div class="drop-zone">
+        <div class="drop-zone-icon">📄</div>
+        <div class="drop-zone-text">Drop XML here or click to browse</div>
+        <input type="file" id="swap-xml" accept=".xml">
+      </div>
+    </div>
+
+    <div class="map-choice-label"><strong>Select Target Map:</strong></div>
+    <label><input type="radio" name="mapChoice" value="hearth" checked> Hearth's Glow</label><br>
+    <label><input type="radio" name="mapChoice" value="comosus"> Comosus Isle</label><br>
+    <label><input type="radio" name="mapChoice" value="lost"> Lost Precipice</label><br>
+    <label><input type="radio" name="mapChoice" value="gilded"> Gilded Hollow</label><br>
+    <label><input type="radio" name="mapChoice" value="windswept"> Windswept Haven</label><br>
+    <label><input type="radio" name="mapChoice" value="isle"> Isle of Reflection</label><br><br>
+
+    <button id="runSwapBtn">Swap Map</button>
+
+  </div>
+
+  <!-- =========================
+       TAB: DECO MERGER
+       ========================= -->
+  <div id="tool-merger" class="tool-pane">
+
+    <div class="section-title">Deco Merger Tool</div>
+
+    <div class="note-box">
+      Merge decorations from one XML into another.<br><br>
+      All <code>&lt;prop&gt;</code> lines from the second XML will be added under the 
+      <code>&lt;Decorations&gt;</code> tag of the original XML, just below the existing props.<br><br>
+      A comment line will be inserted above the merged props containing the clean name of the added XML, e.g.:<br>
+      <code>&lt;!-- MyLayoutName --&gt;</code>
+    </div>
+
+    <div class="grid3">
+      <div>
+        <label>Original Deco Layout XML</label>
+        <div class="drop-zone">
+          <div class="drop-zone-icon">📄</div>
+          <div class="drop-zone-text">Drop XML here or click to browse</div>
+          <input type="file" id="merge-original" accept=".xml">
+        </div>
+      </div>
+      <div>
+        <label>Add Decos XML</label>
+        <div class="drop-zone">
+          <div class="drop-zone-icon">📄</div>
+          <div class="drop-zone-text">Drop XML here or click to browse</div>
+          <input type="file" id="merge-add" accept=".xml">
+        </div>
+      </div>
+    </div>
+
+    <button id="runMergeBtn">Merge XMLs</button>
+
+  </div>
+
+  <!-- =========================
+       TAB: DECO EXTRACTION
+       ========================= -->
+  <div id="tool-extract" class="tool-pane">
+
+    <div class="section-title">Deco Extraction Tool</div>
+
+    <div class="note-box">
+      This tool lets you extract specific deco groups that were previously merged using the <strong>Deco Merger</strong> tool.<br><br>
+      <strong>Important:</strong> The Deco Extraction tool ONLY works on XML documents assembled with the Deco Merger Tool, 
+      where group boundaries are marked by comment lines like:<br>
+      <code>&lt;!-- GroupName --&gt;</code>
+    </div>
+
+    <div>
+      <label>Merged Decorations XML</label>
+      <div class="drop-zone">
+        <div class="drop-zone-icon">📄</div>
+        <div class="drop-zone-text">Drop XML here or click to browse</div>
+        <input type="file" id="extract-xml" accept=".xml">
+      </div>
+    </div>
+
+    <button id="viewExtractGroupsBtn">View Deco Groups</button>
+
+    <div id="extract-groups"></div>
+
+    <button id="extractSelectedGroupsBtn">Extract Selected Groups</button>
+
+  </div>
+
+  <!-- =========================
+       TAB: ABOUT
+       ========================= -->
+  <div id="tool-about" class="tool-pane">
+    <div class="section-title">About / Credits</div>
+
+    <div class="note-box">
+      <strong>Deco Tools for Guild Wars 2</strong><br>
+      Created by <strong>Pew!</strong> (Girbilcannon.8259)<br>
+      <a href="https://tinyarmy.org" target="_blank" class="link-like">https://tinyarmy.org</a><br><br>
+
+      Built with assistance from 
+      <a href="https://chat.openai.com" target="_blank" class="link-like"><strong>ChatGPT</strong></a>.<br><br>
+
+      These tools help streamline homestead decoration workflows:<br>
+      • Move entire decoration sets<br>
+      • Count how many decos are required<br>
+      • Swap homestead maps instantly<br>
+      • Merge deco sets into larger layouts<br>
+      • Extract specific merged groups back out again<br><br>
+
+      Enjoy the freedom of modifying your builds!
+    </div>
+  </div>
+
+  <div class="footer" id="footerText">
+    GW2 Deco Tools • by Pew! • Powered by The Inquest
+  </div>
+
+</div>
+
+<!-- External scripts (order matters: utils first, then UI, then tools) -->
+<script src="utils.js"></script>
+<script src="tabs.js"></script>
+<script src="mover.js"></script>
+<script src="counter.js"></script>
+<script src="swap.js"></script>
+<script src="merge.js"></script>
+<script src="extract.js"></script>
+
+</body>
+</html>
