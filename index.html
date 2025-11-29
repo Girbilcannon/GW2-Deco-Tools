@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>GW2 Deco Tools v7.5.0</title>
+  <title>GW2 Deco Tools v7.5.3</title>
 
   <!-- Strict CSP: no inline scripts/styles, only same-origin resources -->
   <meta http-equiv="Content-Security-Policy"
@@ -41,73 +41,83 @@
   </div>
 
   <!-- =========================
-       TAB: DECO MOVER
-       ========================= -->
-  <div id="tool-mover" class="tool-pane active">
+     TAB: DECO MOVER
+     ========================= -->
+<div id="tool-mover" class="tool-pane active">
 
-    <div class="section-title">Deco Mover Tool</div>
+  <div class="section-title">Deco Mover Tool</div>
 
-    <div class="note-box">
-      Moves all decorations in the main XML by shifting them from a source location to a destination location. 
-      To get a Start and End location, simply clear your decorations, place a box or any object in its rough location, 
-      save it as a new file, move the box to a new spot, and then save a new file for end location.<br><br>
+  <div class="note-box">
+    Moves all decorations in the main XML by shifting them from a source location to a destination location. 
+    To get a Start and End location, simply clear your decorations, place a box or any object in its rough location, 
+    save it as a new file, move the box to a new spot, and then save a new file for end location.<br><br>
 
-      <strong>WORLD ZERO CHECK BOX:</strong><br>
-      If you would like to simply move your grouped decorations to a position of "absolute zero," simply check this box.
-      It will average out your deco locations and move them to the very center of the map. This feature is especially
-      helpful when doing a map swap, and your current layout position is out of bounds.<br><br>
-      <em>Please note that the world zero position rests under the ground in some maps, and will still require a 
-       traditional move to make it visible and where you want it placed.</em>
-    </div>
-
-    <div class="checkbox-row">
-      <label>
-        <input type="checkbox" id="mover-worldzero">
-        Bring Deco to World Zero
-      </label>
-    </div>
-
-    <div class="grid3">
-      <div>
-        <label>Main Decorations XML</label>
-        <div class="drop-zone">
-          <div class="drop-zone-icon">📄</div>
-          <div class="drop-zone-text">Drop XML here or click to browse</div>
-          <input type="file" id="mover-main" accept=".xml">
-        </div>
-      </div>
-      <div>
-        <label>Start Location XML</label>
-        <div class="drop-zone">
-          <div class="drop-zone-icon">📄</div>
-          <div class="drop-zone-text">Drop XML here or click to browse</div>
-          <input type="file" id="mover-start" accept=".xml">
-        </div>
-      </div>
-      <div>
-        <label>End Location XML</label>
-        <div class="drop-zone">
-          <div class="drop-zone-icon">📄</div>
-          <div class="drop-zone-text">Drop XML here or click to browse</div>
-          <input type="file" id="mover-end" accept=".xml">
-        </div>
-      </div>
-    </div>
-
-    <button id="runMoverBtn">Move Decorations</button>
-
-    <!-- VIDEO LINK -->
-    <div class="video-section">
-      <div class="video-caption">
-        Instructional Video for the Deco Mover Tool:
-      </div>
-
-      <a class="video-link" href="https://youtu.be/OkFAmKErguY" target="_blank">
-        ▶ Watch on YouTube
-      </a>
-    </div>
-
+    <strong>WORLD ZERO CHECK BOX:</strong><br>
+    If you would like to simply move your grouped decorations to a position of "absolute zero," simply check this box.
+    It will average out your deco locations and move them to the very center of the map. This feature is especially
+    helpful when doing a map swap, and your current layout position is out of bounds.<br><br>
+    <em>Please note that the world zero position rests under the ground in some maps, and will still require a 
+     traditional move to make it visible and where you want it placed. The Safe Zone feature will allow you to
+    adjust for maps where World Zero may be too close to a waypoint; Guild Halls specifically. It will offset
+    your deco grouping a little to the south and vertically up from world zero. Either way, traditional moving
+    is typically always going to be required, especially in a map swap scenario.</em>
   </div>
+
+  <div class="checkbox-row">
+    <label>
+      <input type="checkbox" id="mover-worldzero">
+      Bring Deco to World Zero
+    </label>
+  </div>
+
+  <!-- SAFE-ZONE DROPDOWN -->
+  <div class="checkbox-row">
+    <label class="mover-label"><strong>Safe Zone:</strong></label>
+    <select id="mover-safezone" disabled>
+      <option value="homestead">Homestead</option>
+      <option value="guildhall">Guild Hall</option>
+    </select>
+  </div>
+
+  <div class="grid3">
+    <div>
+      <label class="mover-label">Main Decorations XML</label>
+      <div class="drop-zone">
+        <div class="drop-zone-icon">📄</div>
+        <div class="drop-zone-text">Drop XML here or click to browse</div>
+        <input type="file" id="mover-main" accept=".xml">
+      </div>
+    </div>
+
+    <div>
+      <label class="mover-label">Start Location XML</label>
+      <div class="drop-zone">
+        <div class="drop-zone-icon">📄</div>
+        <div class="drop-zone-text">Drop XML here or click to browse</div>
+        <input type="file" id="mover-start" accept=".xml">
+      </div>
+    </div>
+
+    <div>
+      <label class="mover-label">End Location XML</label>
+      <div class="drop-zone">
+        <div class="drop-zone-icon">📄</div>
+        <div class="drop-zone-text">Drop XML here or click to browse</div>
+        <input type="file" id="mover-end" accept=".xml">
+      </div>
+    </div>
+  </div>
+
+  <button id="runMoverBtn">Move Decorations</button>
+
+  <div class="video-section">
+    <div class="video-caption">Instructional Video for the Deco Mover Tool:</div>
+    <a class="video-link" href="https://youtu.be/OkFAmKErguY" target="_blank">
+      ▶ Watch on YouTube
+    </a>
+  </div>
+
+</div>
 
   <!-- =========================
        TAB: COUNTER

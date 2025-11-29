@@ -345,3 +345,42 @@ pre {
    LIGHT MODE TWEAKS
    =========================== */
 /* No extra rules needed here; variables handle theme */
+
+/* =======================================================
+   v7.5.2 — Enhanced Fade for Disabled Mover UI Elements
+   ======================================================= */
+
+/* Applies to:
+   - Start/End drop zones
+   - Their text labels
+   - Safe Zone label
+   - Safe Zone dropdown
+*/
+#vectorInputs.disabled,
+.safezone-wrapper.disabled,
+#vectorInputs.disabled *:not(input),
+.safezone-wrapper.disabled *:not(select) {
+    opacity: 0.25 !important;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Fade for the Safe Zone dropdown element itself */
+#mover-safezone:disabled {
+    opacity: 0.25 !important;
+}
+
+/* Shrink Safe Zone dropdown to match your UI style */
+#mover-safezone {
+    width: 180px;
+    padding: 6px 8px;
+    font-size: 0.95rem;
+}
+
+/* =======================================================
+   v7.5.3 — Fade Labels in Deco Mover When Disabled
+   ======================================================= */
+
+.mover-label.disabled {
+    opacity: 0.25 !important;
+    transition: opacity 0.2s ease-in-out;
+}

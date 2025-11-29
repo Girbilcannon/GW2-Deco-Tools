@@ -1,48 +1,83 @@
 function updateMoverMode() {
   const bringZero = document.getElementById("mover-worldzero").checked;
   const startInput = document.getElementById("mover-start");
-  const endInput = document.getElementById("mover-end");
+  const endInput   = document.getElementById("mover-end");
+  const safezoneSel = document.getElementById("mover-safezone");
 
-  if (!startInput || !endInput) return;
+  // All mover labels in their actual DOM order:
+  // 0 = Safe Zone
+  // 1 = Main Decorations XML
+  // 2 = Start Location XML
+  // 3 = End Location XML
+  const labels = document.querySelectorAll(".mover-label");
 
+  const labelSafe  = labels[0];
+  const labelStart = labels[2];
+  const labelEnd   = labels[3];
+
+  // Enable/disable Safe Zone dropdown
+  safezoneSel.disabled = !bringZero;
+
+  // Fade logic:
+  // Safe Zone: fades when NOT in world zero mode
+  if (bringZero) {
+    labelSafe.classList.remove("disabled");
+  } else {
+    labelSafe.classList.add("disabled");
+  }
+
+  // Start/End labels fade IN world zero mode
+  if (bringZero) {
+    labelStart.classList.add("disabled");
+    labelEnd.classList.add("disabled");
+  } else {
+    labelStart.classList.remove("disabled");
+    labelEnd.classList.remove("disabled");
+  }
+
+  // Disable/enable Start/End inputs as before
   const startZone = startInput.closest(".drop-zone");
-  const endZone = endInput.closest(".drop-zone");
+  const endZone   = endInput.closest(".drop-zone");
 
   startInput.disabled = bringZero;
-  endInput.disabled = bringZero;
+  endInput.disabled   = bringZero;
 
   if (startZone) startZone.classList.toggle("disabled", bringZero);
-  if (endZone) endZone.classList.toggle("disabled", bringZero);
+  if (endZone)   endZone.classList.toggle("disabled", bringZero);
 }
 
 function runMover() {
-  const mainFile  = document.getElementById("mover-main").files[0];
+  const mainFile = document.getElementById("mover-main").files[0];
+  const bringZero = document.getElementById("mover-worldzero").checked;
+  const safezone = document.getElementById("mover-safezone").value;
+
   const startFile = document.getElementById("mover-start").files[0];
   const endFile   = document.getElementById("mover-end").files[0];
-  const bringZero = document.getElementById("mover-worldzero").checked;
 
   if (!mainFile) {
     alert("Please select the Main Decorations XML.");
     return;
   }
 
-  // World Zero mode: only main file used
+  // ================================
+  // WORLD ZERO MODE
+  // ================================
   if (bringZero) {
     loadXML(mainFile, mainXML => {
       const props = mainXML.getElementsByTagName("prop");
       if (!props.length) {
-        alert("No <prop> entries found in the Main Decorations XML.");
+        alert("No <prop> entries found in Main XML.");
         return;
       }
 
-      let sumX = 0, sumY = 0, sumZ = 0;
-      let count = 0;
+      let sumX = 0, sumY = 0, sumZ = 0, count = 0;
 
-      // First pass: compute average position
+      // Compute average
       for (let p of props) {
-        const posAttr = p.getAttribute("pos");
-        if (!posAttr) continue;
-        const parts = posAttr.split(" ").map(Number);
+        const pos = p.getAttribute("pos");
+        if (!pos) continue;
+
+        const parts = pos.split(" ").map(Number);
         if (parts.length !== 3 || parts.some(isNaN)) continue;
 
         sumX += parts[0];
@@ -52,7 +87,7 @@ function runMover() {
       }
 
       if (!count) {
-        alert("Could not compute average position; no valid pos attributes found.");
+        alert("Could not compute average position.");
         return;
       }
 
@@ -60,36 +95,46 @@ function runMover() {
       const avgY = sumY / count;
       const avgZ = sumZ / count;
 
-      // Second pass: shift all props so average ends up at (0, 0, 0)
-      for (let p of props) {
-        const posAttr = p.getAttribute("pos");
-        if (!posAttr) continue;
-        const parts = posAttr.split(" ").map(Number);
-        if (parts.length !== 3 || parts.some(isNaN)) continue;
+      // SAFE ZONE OFFSETS
+      let targetX = 0, targetY = 0, targetZ = 0;
 
+      if (safezone === "guildhall") {
+        targetY = -3000;
+        targetZ = -4200;
+      }
+
+      // Shift everything
+      for (let p of props) {
+        const pos = p.getAttribute("pos");
+        if (!pos) continue;
+
+        const parts = pos.split(" ").map(Number);
         const newPos = [
-          parts[0] - avgX,
-          parts[1] - avgY,
-          parts[2] - avgZ
+          parts[0] - avgX + targetX,
+          parts[1] - avgY + targetY,
+          parts[2] - avgZ + targetZ
         ];
 
         p.setAttribute("pos", newPos.join(" "));
       }
 
+      // Output
       const serializer = new XMLSerializer();
-      let xmlResult = serializer.serializeToString(mainXML);
-      xmlResult = prettyPrintXML(xmlResult);
+      let xmlOut = serializer.serializeToString(mainXML);
+      xmlOut = prettyPrintXML(xmlOut);
 
       const outName = mainFile.name.replace(/\.xml$/i, "_ZEROED.xml");
-      downloadBlob(xmlResult, outName, "application/xml");
+      downloadBlob(xmlOut, outName, "application/xml");
     });
 
     return;
   }
 
-  // Legacy mode: requires start/end and uses delta vector
+  // ================================
+  // ORIGINAL MOVE MODE
+  // ================================
   if (!startFile || !endFile) {
-    alert("Please select the Start and End Location XML files, or enable 'Bring Deco to World Zero'.");
+    alert("Please select Start and End XML, or enable World Zero.");
     return;
   }
 
@@ -101,38 +146,35 @@ function runMover() {
         const end   = endXML.getElementsByTagName("prop")[0];
 
         if (!start || !end) {
-          alert("Start or End XML has no <prop> entries.");
+          alert("Start or End XML has no <prop> entry.");
           return;
         }
 
         const s = start.getAttribute("pos").split(" ").map(Number);
         const d = end.getAttribute("pos").split(" ").map(Number);
-
-        if (s.length !== 3 || d.length !== 3 || s.some(isNaN) || d.some(isNaN)) {
-          alert("Invalid pos attribute in Start or End XML.");
-          return;
-        }
-
-        const delta = [d[0] - s[0], d[1] - s[1], d[2] - s[2]];
+        const delta = [d[0]-s[0], d[1]-s[1], d[2]-s[2]];
 
         const props = mainXML.getElementsByTagName("prop");
 
         for (let p of props) {
-          const posAttr = p.getAttribute("pos");
-          if (!posAttr) continue;
-          const pos = posAttr.split(" ").map(Number);
-          if (pos.length !== 3 || pos.some(isNaN)) continue;
+          const pos = p.getAttribute("pos");
+          if (!pos) continue;
+          const parts = pos.split(" ").map(Number);
 
-          const moved = [pos[0] + delta[0], pos[1] + delta[1], pos[2] + delta[2]];
-          p.setAttribute("pos", moved.join(" "));
+          p.setAttribute("pos", [
+            parts[0] + delta[0],
+            parts[1] + delta[1],
+            parts[2] + delta[2]
+          ].join(" "));
         }
 
         const serializer = new XMLSerializer();
-        let xmlResult = serializer.serializeToString(mainXML);
-        xmlResult = prettyPrintXML(xmlResult);
+        let xmlOut = serializer.serializeToString(mainXML);
+        xmlOut = prettyPrintXML(xmlOut);
 
         const outName = mainFile.name.replace(/\.xml$/i, "_moved.xml");
-        downloadBlob(xmlResult, outName, "application/xml");
+        downloadBlob(xmlOut, outName, "application/xml");
+
       });
     });
   });
