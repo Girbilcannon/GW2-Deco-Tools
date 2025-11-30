@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>GW2 Deco Tools v7.5.3</title>
+  <title>GW2 Deco Tools v7.6.0</title>
 
   <!-- Strict CSP: no inline scripts/styles, only same-origin resources -->
   <meta http-equiv="Content-Security-Policy"
@@ -37,12 +37,13 @@
     <button class="tab" data-target="tool-swap">Map Swap</button>
     <button class="tab" data-target="tool-merger">Deco Merger</button>
     <button class="tab" data-target="tool-extract">Deco Extraction</button>
+    <button class="tab" data-target="tool-inspector">XML Inspector</button>
     <button class="tab" data-target="tool-about">About / Credits</button>
   </div>
 
   <!-- =========================
-     TAB: DECO MOVER
-     ========================= -->
+       TAB: DECO MOVER
+       ========================= -->
 <div id="tool-mover" class="tool-pane active">
 
   <div class="section-title">Deco Mover Tool</div>
@@ -111,7 +112,10 @@
   <button id="runMoverBtn">Move Decorations</button>
 
   <div class="video-section">
-    <div class="video-caption">Instructional Video for the Deco Mover Tool:</div>
+    <div class="video-caption">
+      Instructional Video for the Deco Mover Tool:
+    </div>
+
     <a class="video-link" href="https://youtu.be/OkFAmKErguY" target="_blank">
       ▶ Watch on YouTube
     </a>
@@ -253,6 +257,39 @@
   </div>
 
   <!-- =========================
+       TAB: XML INSPECTOR
+       ========================= -->
+  <div id="tool-inspector" class="tool-pane">
+
+    <div class="section-title">XML Inspector</div>
+
+    <div class="note-box">
+      Drag and drop a single XML file to check its formatting. This tool will find unclosed tags, mismatches, 
+      and other structural XML errors. If an error is found, you may auto-repair the file with the Fix Now button.<br><br>
+
+      <em>Please note that this tool cannot fix extensively broken XML, but is great for identifying minor repairs and
+        reparing them.
+      </em>
+    </div>
+
+    <div>
+      <label>XML to Inspect</label>
+      <div class="drop-zone">
+        <div class="drop-zone-icon">📄</div>
+        <div class="drop-zone-text">Drop XML here or click to browse</div>
+        <input type="file" id="inspector-xml" accept=".xml">
+      </div>
+    </div>
+
+    <button id="runInspectorBtn">Inspect</button>
+
+    <pre id="inspector-output"></pre>
+
+    <button id="inspector-fixbtn" class="disabled" disabled>Fix Now</button>
+
+  </div>
+
+  <!-- =========================
        TAB: ABOUT
        ========================= -->
   <div id="tool-about" class="tool-pane">
@@ -291,6 +328,7 @@
 <script src="swap.js"></script>
 <script src="merge.js"></script>
 <script src="extract.js"></script>
+<script src="xmlinspector.js"></script>
 
 </body>
 </html>
