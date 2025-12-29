@@ -120,6 +120,10 @@ h1 {
   box-shadow: var(--shadow-outer), var(--shadow-inner);
 }
 
+.note-box a {
+  color: #58a6ff
+}
+
 .tool-pane.active {
   display: block;
 }
@@ -383,4 +387,101 @@ pre {
 .mover-label.disabled {
     opacity: 0.25 !important;
     transition: opacity 0.2s ease-in-out;
+}
+
+/*========================================================
+  v8.0.0 - DECO TOOLS HELPER UPGRADES
+  ========================================================*/
+
+  #helper-status {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-size: 13px;
+  background: rgba(0,0,0,0.6);
+  padding: 6px 10px;
+  border-radius: 6px;
+  z-index: 1000;
+}
+
+/* First row: dot + text */
+#helper-dot,
+#helper-text {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.helper-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.helper-dot.green {
+  background-color: #3fb950;
+}
+
+.helper-dot.yellow {
+  background-color: #d29922;
+}
+
+.helper-dot.red {
+  background-color: #f85149;
+}
+
+#helper-text {
+  margin-left: 6px;
+}
+
+/* Second row */
+.helper-refresh {
+  display: block;
+  margin-left: 16px; /* aligns under text, not dot */
+  margin-top: 2px;
+  opacity: 0.6;
+  font-size: 11px;
+}
+
+#helper-status a {
+  color: #58a6ff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
+/*Counter Tool - Guild Select */
+.counter-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#counter-guild-select label {
+  margin-right: 6px;
+}
+
+/* ===========================
+   Interactive Mover – Z Anchor
+   =========================== */
+
+.anchor-row {
+  margin: 12px 0 16px;
+  font-size: 14px;
+}
+
+.anchor-row label {
+  margin-right: 14px;
+  cursor: pointer;
+}
+
+.anchor-row input[type="radio"] {
+  margin-right: 4px;
+}
+
+.anchor-note {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
 }

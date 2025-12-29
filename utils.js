@@ -119,7 +119,13 @@ function setupDropZones() {
       } else {
         dt.items.add(xmlFiles[0]);
       }
+
       input.files = dt.files;
+
+      // 🔔 IMPORTANT FIX:
+      // Programmatically setting input.files does NOT trigger "change"
+      // Manually dispatch it so tools (like Deco Counter) detect the XML.
+      input.dispatchEvent(new Event("change", { bubbles: true }));
 
       if (xmlFiles.length === 1 || !input.multiple) {
         if (text) text.textContent = "Loaded: " + xmlFiles[0].name;
