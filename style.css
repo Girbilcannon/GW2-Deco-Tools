@@ -73,6 +73,12 @@ h1 {
   letter-spacing: 0.5px;
 }
 
+h3 {
+  margin-bottom: -10px;
+  font-size: 14pt;
+  color: var(--muted);
+}
+
 /* ===========================
    TABS
    =========================== */
