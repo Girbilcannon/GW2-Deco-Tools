@@ -8,6 +8,8 @@ function getSelectedZAnchor() {
 }
 
 function runInteractiveMover() {
+  console.log("[InteractiveMover] start");
+
   const mainFile = document.getElementById("interactive-xml").files[0];
   const statusEl = document.getElementById("interactive-status");
 
@@ -28,8 +30,6 @@ function runInteractiveMover() {
 
     // ------------------------------------------
     // Compute pivot
-    //  X/Y = average (UNCHANGED)
-    //  Z   = based on anchor selection
     // ------------------------------------------
     let sumX = 0;
     let sumY = 0;
@@ -61,18 +61,18 @@ function runInteractiveMover() {
     }
 
     const anchorMode = getSelectedZAnchor();
-
     let pivotZ;
+
     switch (anchorMode) {
       case "top":
-        pivotZ = minZ;      // lowest numeric = highest physical
+        pivotZ = minZ;
         break;
       case "middle":
         pivotZ = sumZ / count;
         break;
       case "bottom":
       default:
-        pivotZ = maxZ;      // highest numeric = lowest physical
+        pivotZ = maxZ;
         break;
     }
 
@@ -90,71 +90,93 @@ function runInteractiveMover() {
     fetch("http://localhost:61337/mumble")
       .then(r => r.json())
       .then(data => {
-        if (!data.available) {
-          alert("Character position unavailable.");
-          return;
+        try {
+          console.log("[InteractiveMover] mumble data", data);
+
+          if (!data.available) {
+            alert("Character position unavailable.");
+            return;
+          }
+
+          // ------------------------------------------
+          // Mumble → Decoration coordinate conversion
+          // ------------------------------------------
+          const SCALE = 0.025400052;
+
+          const target = {
+            x: data.position.x / SCALE,
+            y: data.position.z / SCALE,
+            z: -data.position.y / SCALE
+          };
+
+          const dx = target.x - pivot.x;
+          const dy = target.y - pivot.y;
+          const dz = target.z - pivot.z;
+
+          // ------------------------------------------
+          // Apply move
+          // ------------------------------------------
+          for (let p of props) {
+            const pos = p.getAttribute("pos");
+            if (!pos) continue;
+
+            const parts = pos.split(" ").map(Number);
+
+            p.setAttribute(
+              "pos",
+              [
+                parts[0] + dx,
+                parts[1] + dy,
+                parts[2] + dz
+              ].join(" ")
+            );
+          }
+
+          // ------------------------------------------
+          // AUTO MAP SWAP
+          // ------------------------------------------
+          const decorationsNode =
+            mainXML.getElementsByTagName("Decorations")[0];
+
+          const mapInfo = getMapInfoById(String(data.mapId));
+
+          if (decorationsNode && mapInfo) {
+            decorationsNode.setAttribute("mapId", mapInfo.mapId);
+            decorationsNode.setAttribute("mapName", mapInfo.mapName);
+            decorationsNode.setAttribute("type", mapInfo.type);
+          }
+
+          // ------------------------------------------
+          // Output
+          // ------------------------------------------
+          const serializer = new XMLSerializer();
+          let xmlOut = serializer.serializeToString(mainXML);
+
+          if (typeof prettyPrintXML === "function") {
+            xmlOut = prettyPrintXML(xmlOut);
+          } else {
+            console.warn("[InteractiveMover] prettyPrintXML not found");
+          }
+
+          const outName =
+            mainFile.name.replace(/\.xml$/i, "_MOVED.xml");
+
+          if (typeof downloadBlob === "function") {
+            console.log("[InteractiveMover] downloading file");
+            downloadBlob(xmlOut, outName, "application/xml");
+          } else {
+            throw new Error("downloadBlob is not defined");
+          }
+
+          if (statusEl) statusEl.textContent = "Done ✔";
         }
-
-        // ------------------------------------------
-        // Mumble → Decoration coordinate conversion
-        // ------------------------------------------
-        const SCALE = 0.025400052;
-
-        const target = {
-          x: data.position.x / SCALE,
-          y: data.position.z / SCALE,
-          z: -data.position.y / SCALE
-        };
-
-        const dx = target.x - pivot.x;
-        const dy = target.y - pivot.y;
-        const dz = target.z - pivot.z;
-
-        // ------------------------------------------
-        // Apply move
-        // ------------------------------------------
-        for (let p of props) {
-          const pos = p.getAttribute("pos");
-          if (!pos) continue;
-
-          const parts = pos.split(" ").map(Number);
-
-          p.setAttribute(
-            "pos",
-            [
-              parts[0] + dx,
-              parts[1] + dy,
-              parts[2] + dz
-            ].join(" ")
-          );
+        catch (err) {
+          console.error("[InteractiveMover] runtime error", err);
+          alert("Interactive move failed. Check console.");
         }
-
-        // ------------------------------------------
-        // AUTO MAP SWAP (matches swap.js behavior)
-        // ------------------------------------------
-        const decorationsNode = mainXML.getElementsByTagName("Decorations")[0];
-        const mapInfo = getMapInfoById(String(data.mapId));
-
-        if (decorationsNode && mapInfo) {
-          decorationsNode.setAttribute("mapId", mapInfo.mapId);
-          decorationsNode.setAttribute("mapName", mapInfo.mapName);
-          decorationsNode.setAttribute("type", mapInfo.type);
-        }
-
-        // ------------------------------------------
-        // Output
-        // ------------------------------------------
-        const serializer = new XMLSerializer();
-        let xmlOut = serializer.serializeToString(mainXML);
-        xmlOut = prettyPrintXML(xmlOut);
-
-        const outName = mainFile.name.replace(/\.xml$/i, "_MOVED.xml");
-        downloadBlob(xmlOut, outName, "application/xml");
-
-        if (statusEl) statusEl.textContent = "Done ✔";
       })
       .catch(err => {
-        console.error(err);
+        console.error("[InteractiveMover] fetch failed", err);
         alert("Failed to contact Deco Tools Helper.");
       });
   });
