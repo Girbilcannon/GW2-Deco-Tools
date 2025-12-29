@@ -8,7 +8,7 @@ let helperHasApi = false;
    ====================================================== */
 async function initHelperStatus() {
   try {
-    const res = await fetch("http://127.0.0.1:61337/status");
+    const res = await fetch("http://localhost:61337/status");
     if (!res.ok) return;
 
     const status = await res.json();
@@ -84,7 +84,7 @@ async function populateGuildDropdown() {
   select.innerHTML = `<option value="">Populating guild list…</option>`;
 
   try {
-    const res = await fetch("http://127.0.0.1:61337/guilds");
+    const res = await fetch("http://localhost:61337/guilds");
     if (!res.ok) throw new Error();
 
     const guilds = await res.json();
@@ -196,7 +196,7 @@ async function runCounter() {
           const ids = Object.keys(requiredById).map(id => parseInt(id, 10));
 
           const res = await fetch(
-            `http://127.0.0.1:61337/decos/guild/${selectedGuildId}`,
+            `http://localhost:61337/decos/guild/${selectedGuildId}`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -209,7 +209,7 @@ async function runCounter() {
           }
         } else {
           const res = await fetch(
-            "http://127.0.0.1:61337/decos/homestead"
+            "http://localhost:61337/decos/homestead"
           );
 
           if (res.ok) {

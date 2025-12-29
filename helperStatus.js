@@ -15,7 +15,7 @@ async function checkHelperStatus() {
 
   // Try status endpoint (proves helper is running)
   try {
-    const statusRes = await fetch("http://127.0.0.1:61337/status");
+    const statusRes = await fetch("http://localhost:61337/status");
     if (!statusRes.ok) throw new Error();
     status = await statusRes.json();
   } catch {
@@ -24,7 +24,7 @@ async function checkHelperStatus() {
 
   // Helper is running → check Mumble
   try {
-    const mumbleRes = await fetch("http://127.0.0.1:61337/mumble");
+    const mumbleRes = await fetch("http://localhost:61337/mumble");
     mumble = await mumbleRes.json();
   } catch {
     mumble = { available: false };

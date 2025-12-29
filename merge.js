@@ -17,7 +17,7 @@ let mergeSelectedGuildId = null;
    ========================= */
 async function initMergeHelperStatus() {
   try {
-    const res = await fetch("http://127.0.0.1:61337/status");
+    const res = await fetch("http://localhost:61337/status");
     if (!res.ok) throw new Error("status not ok");
     const status = await res.json();
     mergeHelperHasApi = !!status.apiKeyPresent;
@@ -54,7 +54,7 @@ async function populateMergeGuildDropdown() {
   select.innerHTML = `<option value="">Populating guild list…</option>`;
 
   try {
-    const res = await fetch("http://127.0.0.1:61337/guilds");
+    const res = await fetch("http://localhost:61337/guilds");
     if (!res.ok) throw new Error("guilds not ok");
 
     const guilds = await res.json();
@@ -371,12 +371,12 @@ async function runMerge() {
     if (mergeHelperHasApi) {
       try {
         if (baseType === "HOMESTEAD") {
-          const res = await fetch("http://127.0.0.1:61337/decos/homestead");
+          const res = await fetch("http://localhost:61337/decos/homestead");
           if (res.ok) ownedById = await res.json();
         } else if (baseType === "GUILD" && mergeSelectedGuildId) {
           const ids = Object.keys(requiredById).map(id => parseInt(id, 10));
           const res = await fetch(
-            `http://127.0.0.1:61337/decos/guild/${mergeSelectedGuildId}`,
+            `http://localhost:61337/decos/guild/${mergeSelectedGuildId}`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },

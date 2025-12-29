@@ -87,7 +87,7 @@ function runInteractiveMover() {
     // ------------------------------------------
     // Fetch Mumble data
     // ------------------------------------------
-    fetch("http://127.0.0.1:61337/mumble")
+    fetch("http://localhost:61337/mumble")
       .then(r => r.json())
       .then(data => {
         if (!data.available) {
