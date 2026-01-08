@@ -491,3 +491,18 @@ pre {
   font-size: 12px;
   color: var(--muted);
 }
+
+/* =========================
+   Map Swap (Beta)
+   ========================= */
+
+.swap-output {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 0;
+  min-height: 180px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

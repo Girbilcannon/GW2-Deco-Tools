@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>GW2 Deco Tools v8.0.2</title>
+  <title>GW2 Deco Tools 2026v1</title>
 
   <!-- Strict CSP -->
   <meta http-equiv="Content-Security-Policy"
@@ -49,9 +49,9 @@
        ================================================== -->
   <div class="tabs">
     <button class="tab active" data-target="tool-mover">Deco Mover</button>
-    <button class="tab" data-target="tool-interactive-mover">Interactive Move Tool (Beta)</button>
+    <button class="tab" data-target="tool-interactive-mover">Interactive Move Tool</button>
     <button class="tab" data-target="tool-counter">Deco Counter</button>
-    <button class="tab" data-target="tool-swap">Map Swap</button>
+    <button class="tab" data-target="tool-swap">Map Swap (Beta)</button>
     <button class="tab" data-target="tool-merger">Deco Merger</button>
     <button class="tab" data-target="tool-extract">Deco Extraction</button>
     <button class="tab" data-target="tool-inspector">XML Inspector</button>
@@ -215,14 +215,17 @@
        ================================================== -->
   <div id="tool-swap" class="tool-pane">
 
-    <div class="section-title">Map Swap Tool</div>
+    <div class="section-title">Map Swap Tool (Beta)</div>
 
     <div class="note-box">
-      Easily swap your map from Homestead to Homestead or Guild Hall to Guild Hall without breaking a sweat.
+      <p>Swap maps from Homestead > Homestead, Guild Hall > Guild Hall, or how about Homestead > Guild hall and vice versa? Whichever map you choose, this tool can get you there! No more guess work of figuring out which deco IDs work and the number for its counter-part should be; Simply load up an XML, choose a map, choose the guild for which hall it's going to (If you are moving TO a homestead), pre-check the transition information, and download your XML. This tool just WORKS!</p>
+      <h3>Deco Tools Helper v1.2</h3>
+      <p>In order to use this tool and some of our other tools to their fullest extend, you must download the latest version of our Deco Tools Helper! This tool currently requires v1.2. Any less will not have the appropriate endpoints to obtain the decoration information necessary to work.</p>
+      <p><em><strong>Note:</strong> Not all decorations work when swapping map types, and this page will inform you of the ones that do  not work. Also be very aware that when going from Homestead to Guild Hall that too many decorations in an area will simply not work.</em></p>
     </div>
 
     <div>
-      <label>Homestead Decorations XML</label>
+      <label>Decorations XML</label>
       <div class="drop-zone">
         <div class="drop-zone-icon">📄</div>
         <div class="drop-zone-text">Drop XML here or click to browse</div>
@@ -231,14 +234,41 @@
     </div>
 
     <div class="map-choice-label"><strong>Select Target Map:</strong></div>
-    <label><input type="radio" name="mapChoice" value="hearth" checked> Hearth's Glow</label><br>
-    <label><input type="radio" name="mapChoice" value="comosus"> Comosus Isle</label><br>
-    <label><input type="radio" name="mapChoice" value="lost"> Lost Precipice</label><br>
-    <label><input type="radio" name="mapChoice" value="gilded"> Gilded Hollow</label><br>
-    <label><input type="radio" name="mapChoice" value="windswept"> Windswept Haven</label><br>
-    <label><input type="radio" name="mapChoice" value="isle"> Isle of Reflection</label><br><br>
+    <label><input type="radio" name="swapMapChoice" value="hearth" checked> Hearth's Glow</label><br>
+    <label><input type="radio" name="swapMapChoice" value="comosus"> Comosus Isle</label><br>
+    <label><input type="radio" name="swapMapChoice" value="lost"> Lost Precipice</label><br>
+    <label><input type="radio" name="swapMapChoice" value="gilded"> Gilded Hollow</label><br>
+    <label><input type="radio" name="swapMapChoice" value="windswept"> Windswept Haven</label><br>
+    <label><input type="radio" name="swapMapChoice" value="isle"> Isle of Reflection</label><br>
 
-    <button id="runSwapBtn">Swap Map</button>
+    <!-- Action row: Pre-check + Guild dropdown + checkbox -->
+    <br>
+    <div class="counter-controls" style="margin-top: 18px;">
+      <button id="swap-precheck-btn">Pre-Check</button>
+
+      <div id="swap-guild-wrap" hidden>
+        <label style="margin-right: 8px;">Guild:</label>
+        <select id="swap-guild">
+          <option value="none">Select guild…</option>
+        </select>
+      </div>
+
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" id="swap-include-missing">
+        Include Missing Decorations
+      </label>
+    </div>
+
+    <div style="margin-top: 14px;">
+      <br>
+      <div class="map-choice-label"><strong>Pre-Check Output:</strong></div>
+      <pre id="swap-output" class="swap-output"></pre>
+    </div>
+
+    <div class="counter-controls" style="margin-top: 14px;">
+      <button id="swap-print-btn">Print List</button>
+      <button id="runSwapBtn">Swap Maps</button>
+    </div>
   </div>
 
   <!-- =========================
@@ -343,7 +373,7 @@
       <p>With <strong>GW2 Deco Tools</strong> you don't need to worry about hacked accounts, site corruption, data breaches, or anything of the sorts because the page is 100% static served with rock-solid security policy. This meaning, there is nothing happening on the back-end at the server level. What you see is served directly to you and your browser does the heavy lifting. Even the XML files you upload never leave your local browser.</p>
 
       <h3>Deco Tools Helper App</h3>
-      <p>With <strong>Deco Tools Helper</strong> (not required), you unlock so much more of tools than ever possible before. Think of this stand-alone app as a "bridge" that runs securely and silently in the background, locally on your computer. This bridge has the ability to gain access to the local information shared by your GW2 game client such as current map and 3D position data. It also has access to locked API data that gets retrieved when one of the tools calls upon it, allowing you to get access to things like basic decoration counts.</p>
+      <p>With <strong><a href="https://github.com/Girbilcannon/DecoToolsHelper/releases" target=_blank>Deco Tools Helper</a></strong> (not required for all tools), you unlock so much more power than ever possible before. Think of this stand-alone app as a "bridge" that runs securely and silently in the background, locally on your computer. This bridge has the ability to gain access to the local information shared by your GW2 game client such as current map and 3D position data. It also has access to locked API data that gets retrieved when one of the tools calls upon it, allowing you to get access to things like basic decoration counts.</p>
 
       <p>This app, like all of our tools, only runs locally between the game and your browser, only pinging very specific GW2 API data and nothing else, and <em>only</em> when the tool you are using calls for it to do so. Even your private API key is stored locally on your computer. We give you the best of everything and take absolutely <em>nothing</em>> of yours.</p>
 
